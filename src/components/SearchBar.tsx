@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../app/store';
 import { fetchWeather } from '../features/weather/weatherSlice';
 import styled from 'styled-components';
+import Modal from './Modal';
 
 const SearchContainer = styled.div`
   display: flex;
@@ -34,15 +35,24 @@ const Button = styled.button`
 
 const SearchBar: React.FC = () => {
   const [city, setCity] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
   const dispatch: AppDispatch = useDispatch();
 
-  const handleSearch = () => {
-    if (city) {
-      dispatch(fetchWeather(city));
+  const handleSearch = async () => {
+    const resultAction = await dispatch(fetchWeather(city));
+    if (fetchWeather.rejected.match(resultAction)) {
+      setModalMessage('City not found. Please try again.');
+      setShowModal(true);
     }
   };
 
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
   return (
+    <>
     <SearchContainer>
       <Input
         type="text"
@@ -52,6 +62,8 @@ const SearchBar: React.FC = () => {
       />
       <Button onClick={handleSearch}>Search</Button>
     </SearchContainer>
+    {showModal && <Modal message={modalMessage} onClose={handleCloseModal} />}
+    </>
   );
 };
 

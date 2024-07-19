@@ -22,13 +22,17 @@ const initialState: WeatherState = {
 
 export const fetchWeather = createAsyncThunk(
   'weather/fetchWeather',
-  async (city: string) => {
-    const currentWeatherResponse = await axios.get(`${BASE_URL}weather?q=${city}&appid=${API_KEY}`);
-    const dailyForecastResponse = await axios.get(`${BASE_URL}forecast?q=${city}&appid=${API_KEY}`);
-    return {
-      currentWeather: currentWeatherResponse.data,
-      dailyForecast: dailyForecastResponse.data.list,
-    };
+  async (city: string, { rejectWithValue }) => {
+    try {
+      const currentWeatherResponse = await axios.get(`${BASE_URL}weather?q=${city}&appid=${API_KEY}`);
+      const dailyForecastResponse = await axios.get(`${BASE_URL}forecast?q=${city}&appid=${API_KEY}`);
+      return {
+        currentWeather: currentWeatherResponse.data,
+        dailyForecast: dailyForecastResponse.data.list,
+      };
+    } catch (error) {
+      return rejectWithValue('City not found');
+    }
   }
 );
 
