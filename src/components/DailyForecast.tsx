@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { WiDaySunny, WiRain, WiSnow, WiCloudy, WiThunderstorm } from 'react-icons/wi';
+import { formatDate, formatTime } from '../utils/helpers';
 
 const ForecastContainer = styled.div`
   background: white;
@@ -10,30 +11,39 @@ const ForecastContainer = styled.div`
   margin: 20px;
 `;
 
-const DayList = styled.ul`
-  list-style: none;
-  padding: 0;
-  margin: 0;
+const DayList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  gap: 20px;
 `;
 
-const DayItem = styled.li`
+const DayCard = styled.div<{ selected: boolean }>`
+  background: ${props => props.selected ? '#007bff' : '#f1f1f1'};
+  color: ${props => props.selected ? '#fff' : '#000'};
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
+  padding: 20px;
+  text-align: center;
+  width: 150px;
+  transition: background-color 0.3s, color 0.3s;
 
-  &:last-child {
-    border-bottom: none;
+  &:hover {
+    background: ${props => props.selected ? '#0056b3' : '#e0e0e0'};
   }
 `;
 
-const Details = styled.div`
-  margin-top: 10px;
-  padding: 10px;
-  border-top: 1px solid #ddd;
+const Icon = styled.div`
+  font-size: 3rem;
+  margin-bottom: 10px;
 `;
 
-const Icon = styled.div`
-  font-size: 2rem;
+const Details = styled.div`
+  margin-top: 20px;
+  padding: 20px;
+  background: #f1f1f1;
+  border-radius: 12px;
 `;
 
 interface DailyForecastProps {
@@ -67,20 +77,29 @@ const DailyForecast: React.FC<DailyForecastProps> = ({ daily }) => {
       <h2>Daily Forecast</h2>
       <DayList>
         {daily.map((day, index) => (
-          <DayItem key={index} onClick={() => setSelectedDay(index)}>
-            {new Date(day.dt * 1000).toLocaleDateString()}
+          <DayCard 
+            key={index} 
+            selected={index === selectedDay} 
+            onClick={() => setSelectedDay(index)}
+          >
+            <div>{formatDate(day.dt)}</div>
+            <div>{formatTime(day.dt)}</div>
             <Icon>{getWeatherIcon(day.weather[0].description)}</Icon>
-          </DayItem>
+            <div>{Math.round(day.main.temp - 273.15)}°C</div>
+          </DayCard>
         ))}
       </DayList>
       <Details>
-        <h3>Details for {new Date(daily[selectedDay].dt * 1000).toLocaleDateString()}</h3>
+        <h3>Details for {formatDate(daily[selectedDay].dt)}</h3>
         <p>{daily[selectedDay].weather[0].description}</p>
         <p>{Math.round(daily[selectedDay].main.temp - 273.15)}°C</p>
+        <p>Time: {formatTime(daily[selectedDay].dt)}</p>
       </Details>
     </ForecastContainer>
   );
 };
 
 export default DailyForecast;
+
+
 
