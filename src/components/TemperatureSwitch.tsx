@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import styled from 'styled-components';
 
 const SwitchContainer = styled.div`
@@ -21,16 +21,31 @@ const Button = styled.button`
   }
 `;
 
-const TemperatureSwitch: React.FC = () => {
+export const UnitContext = createContext({
+  unit: 'C',
+  toggleUnit: () => {},
+});
+
+export const TemperatureProvider: React.FC<{children: any}> = ({ children }) => {
   const [unit, setUnit] = useState<'C' | 'F'>('C');
 
-  const handleSwitch = () => {
+  const toggleUnit = () => {
     setUnit((prevUnit) => (prevUnit === 'C' ? 'F' : 'C'));
   };
 
   return (
+    <UnitContext.Provider value={{ unit, toggleUnit }}>
+      {children}
+    </UnitContext.Provider>
+  );
+};
+
+const TemperatureSwitch: React.FC = () => {
+  const { unit, toggleUnit } = useContext(UnitContext);
+
+  return (
     <SwitchContainer>
-      <Button onClick={handleSwitch}>
+      <Button onClick={toggleUnit}>
         Switch to {unit === 'C' ? 'Fahrenheit' : 'Celsius'}
       </Button>
     </SwitchContainer>

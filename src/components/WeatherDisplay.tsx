@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
+import { UnitContext } from './TemperatureSwitch';
+import { kelvinToCelsius, kelvinToFahrenheit } from '../utils/helpers';
 
 const Container = styled.div`
   background: white;
@@ -27,13 +29,19 @@ interface WeatherDisplayProps {
 }
 
 const WeatherDisplay: React.FC<WeatherDisplayProps> = ({ weather }) => {
+  const { unit } = useContext(UnitContext);
+
   if (!weather) return null;
+
+  const convertTemp = (temp: number) => {
+    return unit === 'C' ? kelvinToCelsius(temp) : kelvinToFahrenheit(temp);
+  };
 
   return (
     <Container>
       <h1>{weather.name}</h1>
       <Description>{weather.weather[0].description}</Description>
-      <Temperature>{Math.round(weather.main.temp - 273.15)}°C</Temperature>
+      <Temperature>{convertTemp(weather.main.temp)}°{unit}</Temperature>
     </Container>
   );
 };

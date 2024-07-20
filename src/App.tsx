@@ -4,15 +4,18 @@ import HomePage from './pages/HomePage';
 import { Provider } from 'react-redux';
 import { store } from './app/store';
 import GlobalStyles from './styles/GlobalStyles';
+import { TemperatureProvider } from './components/TemperatureSwitch';
 
 const App: React.FC = () => {
   return (
     <Provider store={store}>
       <Router>
-        <GlobalStyles />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-        </Routes>
+      <TemperatureProvider>
+          <GlobalStyles />
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+          </Routes>
+        </TemperatureProvider>
       </Router>
     </Provider>
   );

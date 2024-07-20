@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 import { WiDaySunny, WiRain, WiSnow, WiCloudy, WiThunderstorm } from 'react-icons/wi';
-import { formatDate, formatTime } from '../utils/helpers';
+import { formatDate, formatTime, kelvinToCelsius, kelvinToFahrenheit } from '../utils/helpers';
+import { UnitContext } from './TemperatureSwitch';
 
 const ForecastContainer = styled.div`
   background: white;
@@ -52,6 +53,8 @@ interface DailyForecastProps {
 
 const DailyForecast: React.FC<DailyForecastProps> = ({ daily }) => {
   const [selectedDay, setSelectedDay] = useState(0);
+  const { unit } = useContext(UnitContext);
+
 
   if (!daily.length) return null;
 
@@ -72,6 +75,10 @@ const DailyForecast: React.FC<DailyForecastProps> = ({ daily }) => {
     }
   };
 
+  const convertTemp = (temp: number) => {
+    return unit === 'C' ? kelvinToCelsius(temp) : kelvinToFahrenheit(temp);
+  };
+
   return (
     <ForecastContainer>
       <h2>Daily Forecast</h2>
@@ -85,14 +92,14 @@ const DailyForecast: React.FC<DailyForecastProps> = ({ daily }) => {
             <div>{formatDate(day.dt)}</div>
             <div>{formatTime(day.dt)}</div>
             <Icon>{getWeatherIcon(day.weather[0].description)}</Icon>
-            <div>{Math.round(day.main.temp - 273.15)}°C</div>
+            <div>{convertTemp(Math.round(day.main.temp))}°{unit}</div>
           </DayCard>
         ))}
       </DayList>
       <Details>
         <h3>Details for {formatDate(daily[selectedDay].dt)}</h3>
         <p>{daily[selectedDay].weather[0].description}</p>
-        <p>{Math.round(daily[selectedDay].main.temp - 273.15)}°C</p>
+        <p>{convertTemp(Math.round(daily[selectedDay].main.temp))}°{unit}</p>
         <p>Time: {formatTime(daily[selectedDay].dt)}</p>
       </Details>
     </ForecastContainer>
