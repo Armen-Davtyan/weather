@@ -1,9 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-
-const API_KEY = 'cd9cd92eac0c573bbdd2437f4cb01fbe';
-const BASE_URL = 'https://api.openweathermap.org/data/2.5/';
-
+import { fetchCurrentWeather, fetchDailyForecast, fetchHourlyForecast } from './weatherAPI';
 interface WeatherState {
   currentWeather: any;
   hourlyForecast: any[];
@@ -24,11 +20,13 @@ export const fetchWeather = createAsyncThunk(
   'weather/fetchWeather',
   async (city: string, { rejectWithValue }) => {
     try {
-      const currentWeatherResponse = await axios.get(`${BASE_URL}weather?q=${city}&appid=${API_KEY}`);
-      const dailyForecastResponse = await axios.get(`${BASE_URL}forecast?q=${city}&appid=${API_KEY}`);
+      const currentWeatherResponse = await fetchCurrentWeather(city);
+      const hourlyForecastResponse = await fetchHourlyForecast(city);
+      const dailyForecastResponse = await fetchDailyForecast(city);
       return {
-        currentWeather: currentWeatherResponse.data,
-        dailyForecast: dailyForecastResponse.data.list,
+        currentWeather: currentWeatherResponse,
+        hourlyForecast: hourlyForecastResponse,
+        dailyForecast: dailyForecastResponse,
       };
     } catch (error) {
       return rejectWithValue('City not found');
@@ -48,6 +46,7 @@ const weatherSlice = createSlice({
       .addCase(fetchWeather.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.currentWeather = action.payload.currentWeather;
+        state.hourlyForecast = action.payload.hourlyForecast;
         state.dailyForecast = action.payload.dailyForecast;
       })
       .addCase(fetchWeather.rejected, (state, action) => {

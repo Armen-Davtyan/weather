@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { WiDaySunny, WiRain, WiSnow, WiCloudy, WiThunderstorm } from 'react-icons/wi';
 import { formatDate, formatTime, kelvinToCelsius, kelvinToFahrenheit } from '../utils/helpers';
 import { UnitContext } from './TemperatureSwitch';
@@ -19,6 +19,15 @@ const DayList = styled.div`
   gap: 20px;
 `;
 
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
 const DayCard = styled.div<{ selected: boolean }>`
   background: ${props => props.selected ? '#007bff' : '#f1f1f1'};
   color: ${props => props.selected ? '#fff' : '#000'};
@@ -28,16 +37,19 @@ const DayCard = styled.div<{ selected: boolean }>`
   padding: 20px;
   text-align: center;
   width: 150px;
-  transition: background-color 0.3s, color 0.3s;
+  transition: background-color 0.3s, color 0.3s, transform 0.3s;
+  animation: ${fadeIn} 0.5s ease-in;
 
   &:hover {
     background: ${props => props.selected ? '#0056b3' : '#e0e0e0'};
+    transform: translateY(-5px);
   }
 `;
 
 const Icon = styled.div`
   font-size: 3rem;
   margin-bottom: 10px;
+  animation: ${fadeIn} 1s ease-in;
 `;
 
 const Details = styled.div`
@@ -45,6 +57,8 @@ const Details = styled.div`
   padding: 20px;
   background: #f1f1f1;
   border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  animation: ${fadeIn} 0.5s ease-in;
 `;
 
 interface DailyForecastProps {
@@ -54,7 +68,6 @@ interface DailyForecastProps {
 const DailyForecast: React.FC<DailyForecastProps> = ({ daily }) => {
   const [selectedDay, setSelectedDay] = useState(0);
   const { unit } = useContext(UnitContext);
-
 
   if (!daily.length) return null;
 
@@ -92,7 +105,7 @@ const DailyForecast: React.FC<DailyForecastProps> = ({ daily }) => {
             <div>{formatDate(day.dt)}</div>
             <div>{formatTime(day.dt)}</div>
             <Icon>{getWeatherIcon(day.weather[0].description)}</Icon>
-            <div>{convertTemp(Math.round(day.main.temp))}°{unit}</div>
+            <div>{convertTemp(day.main.temp)}°{unit}</div>
           </DayCard>
         ))}
       </DayList>
