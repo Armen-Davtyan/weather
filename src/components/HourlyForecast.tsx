@@ -68,17 +68,17 @@ const HourlyForecast: React.FC<HourlyForecastProps> = ({ hourly }) => {
   const getWeatherIcon = (description: string) => {
     switch (true) {
       case /clear/.test(description):
-        return <WiDaySunny />;
+        return <WiDaySunny color="#f7b733" />;
       case /rain/.test(description):
-        return <WiRain />;
+        return <WiRain color="#007bff" />;
       case /snow/.test(description):
-        return <WiSnow />;
+        return <WiSnow color="#00bfff" />;
       case /cloud/.test(description):
-        return <WiCloudy />;
+        return <WiCloudy color="#b0bec5" />;
       case /storm/.test(description):
-        return <WiThunderstorm />;
+        return <WiThunderstorm color="#ff6f61" />;
       default:
-        return <WiCloudy />;
+        return <WiCloudy color="#b0bec5" />;
     }
   };
 

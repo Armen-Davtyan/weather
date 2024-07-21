@@ -8,11 +8,6 @@ export const fetchCurrentWeather = async (city: string) => {
   return response.data;
 };
 
-export const fetchHourlyForecast = async (city: string) => {
-  const response = await axios.get(`${BASE_URL}forecast?q=${city}&appid=${API_KEY}`);
-  return response.data.list.filter((_: any, index: number) => index < 8);
-};
-
 export const fetchDailyForecast = async (city: string) => {
   const response = await axios.get(`${BASE_URL}forecast?q=${city}&appid=${API_KEY}`);
   return response.data.list;

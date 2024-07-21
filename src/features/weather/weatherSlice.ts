@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchCurrentWeather, fetchDailyForecast, fetchHourlyForecast } from './weatherAPI';
+import { fetchCurrentWeather, fetchDailyForecast } from './weatherAPI';
 interface WeatherState {
   currentWeather: any;
   hourlyForecast: any[];
@@ -21,11 +21,10 @@ export const fetchWeather = createAsyncThunk(
   async (city: string, { rejectWithValue }) => {
     try {
       const currentWeatherResponse = await fetchCurrentWeather(city);
-      const hourlyForecastResponse = await fetchHourlyForecast(city);
       const dailyForecastResponse = await fetchDailyForecast(city);
       return {
         currentWeather: currentWeatherResponse,
-        hourlyForecast: hourlyForecastResponse,
+        hourlyForecast: dailyForecastResponse.filter((_: any, index: number) => index < 8),
         dailyForecast: dailyForecastResponse,
       };
     } catch (error) {

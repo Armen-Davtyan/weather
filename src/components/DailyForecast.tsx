@@ -29,8 +29,8 @@ const fadeIn = keyframes`
 `;
 
 const DayCard = styled.div<{ selected: boolean }>`
-  background: ${props => props.selected ? '#007bff' : '#f1f1f1'};
-  color: ${props => props.selected ? '#fff' : '#000'};
+  background: ${props => props.selected ? '#007bff' : '#f9f9f9'};
+  color: ${props => props.selected ? '#fff' : '#333'};
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
@@ -41,21 +41,22 @@ const DayCard = styled.div<{ selected: boolean }>`
   animation: ${fadeIn} 0.5s ease-in;
 
   &:hover {
-    background: ${props => props.selected ? '#0056b3' : '#e0e0e0'};
+    background: ${props => props.selected ? '#0056b3' : '#e6e6e6'};
     transform: translateY(-5px);
   }
 `;
 
-const Icon = styled.div`
+const Icon = styled.div<{ color: string }>`
   font-size: 3rem;
   margin-bottom: 10px;
+  color: ${props => props.color};
   animation: ${fadeIn} 1s ease-in;
 `;
 
 const Details = styled.div`
   margin-top: 20px;
   padding: 20px;
-  background: #f1f1f1;
+  background: #f9f9f9;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   animation: ${fadeIn} 0.5s ease-in;
@@ -74,17 +75,17 @@ const DailyForecast: React.FC<DailyForecastProps> = ({ daily }) => {
   const getWeatherIcon = (description: string) => {
     switch (true) {
       case /clear/.test(description):
-        return <WiDaySunny />;
+        return <WiDaySunny color="#f7b733" />;
       case /rain/.test(description):
-        return <WiRain />;
+        return <WiRain color="#2345c9" />;
       case /snow/.test(description):
-        return <WiSnow />;
+        return <WiSnow color="#00bfff" />;
       case /cloud/.test(description):
-        return <WiCloudy />;
+        return <WiCloudy color="#b0bec5" />;
       case /storm/.test(description):
-        return <WiThunderstorm />;
+        return <WiThunderstorm color="#ff6f61" />;
       default:
-        return <WiCloudy />;
+        return <WiCloudy color="#b0bec5" />;
     }
   };
 
@@ -104,7 +105,9 @@ const DailyForecast: React.FC<DailyForecastProps> = ({ daily }) => {
           >
             <div>{formatDate(day.dt)}</div>
             <div>{formatTime(day.dt)}</div>
-            <Icon>{getWeatherIcon(day.weather[0].description)}</Icon>
+            <Icon color={getWeatherIcon(day.weather[0].description)?.props.color}>
+              {getWeatherIcon(day.weather[0].description)}
+            </Icon>
             <div>{convertTemp(day.main.temp)}°{unit}</div>
           </DayCard>
         ))}
@@ -112,7 +115,7 @@ const DailyForecast: React.FC<DailyForecastProps> = ({ daily }) => {
       <Details>
         <h3>Details for {formatDate(daily[selectedDay].dt)}</h3>
         <p>{daily[selectedDay].weather[0].description}</p>
-        <p>{convertTemp(Math.round(daily[selectedDay].main.temp))}°{unit}</p>
+        <p>{convertTemp(daily[selectedDay].main.temp)}°{unit}</p>
         <p>Time: {formatTime(daily[selectedDay].dt)}</p>
       </Details>
     </ForecastContainer>
@@ -120,6 +123,3 @@ const DailyForecast: React.FC<DailyForecastProps> = ({ daily }) => {
 };
 
 export default DailyForecast;
-
-
-
